@@ -9,24 +9,26 @@ class AuditLog extends Model
     protected $fillable = [
         'user_id',
         'action',
-        'auditable_type',
-        'auditable_id',
         'description',
+        'subject_type',
+        'subject_id',
         'ip_address',
-        'user_agent',
-        'url',
-        'method',
     ];
 
-    // Relasi ke user yang melakukan aksi
+    /**
+     * User yang melakukan aksi.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Relasi polymorphic ke objek yang diaudit (Post, dsb.)
-    public function auditable()
+    /**
+     * Model yang menjadi subject dari log (misalnya Post).
+     */
+    public function subject()
     {
-        return $this->morphTo();
+        // morphTo() pakai kolom subject_type & subject_id
+        return $this->morphTo(__FUNCTION__, 'subject_type', 'subject_id');
     }
 }

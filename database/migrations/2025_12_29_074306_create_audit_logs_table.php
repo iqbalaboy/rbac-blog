@@ -11,24 +11,17 @@ return new class extends Migration
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
 
-            // siapa yang melakukan
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('user_id')->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
-            // jenis aksi, misalnya: login, post_created, post_updated, post_deleted, post_submitted, post_approved, post_rejected
-            $table->string('action');
+            $table->string('action', 100);
+            $table->string('description')->nullable();
 
-            // tipe dan id objek yang terlibat (polymorphic)
-            $table->string('auditable_type')->nullable();
-            $table->unsignedBigInteger('auditable_id')->nullable();
+            $table->string('subject_type')->nullable();
+            $table->unsignedBigInteger('subject_id')->nullable();
 
-            // ringkasan / deskripsi singkat
-            $table->text('description')->nullable();
-
-            // konteks request
-            $table->string('ip_address')->nullable();
-            $table->string('user_agent')->nullable();
-            $table->string('url')->nullable();
-            $table->string('method', 10)->nullable();
+            $table->string('ip_address', 45)->nullable();
 
             $table->timestamps();
         });

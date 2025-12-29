@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\AuditLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request as RequestFacade;
 
 class PostController extends Controller
 {
@@ -64,6 +66,13 @@ class PostController extends Controller
             'status'  => 'draft',
         ]);
 
+        // AUDIT LOG: create draft
+        $this->logAudit(
+            'post.created',
+            "Membuat post '{$post->title}' (ID: {$post->id}) sebagai draft",
+            $post
+        );
+
         return redirect()
             ->route('posts.edit', $post)
             ->with('success', 'Post created as draft.');
@@ -103,6 +112,13 @@ class PostController extends Controller
             'body'  => $request->body,
         ]);
 
+        // AUDIT LOG: update
+        $this->logAudit(
+            'post.updated',
+            "Mengupdate post '{$post->title}' (ID: {$post->id})",
+            $post
+        );
+
         return redirect()
             ->route('posts.index')
             ->with('success', 'Post updated.');
@@ -119,7 +135,16 @@ class PostController extends Controller
             }
         }
 
+        $title = $post->title;
+        $id    = $post->id;
+
         $post->delete();
+
+        // AUDIT LOG: delete
+        $this->logAudit(
+            'post.deleted',
+            "Menghapus post '{$title}' (ID: {$id})"
+        );
 
         return redirect()
             ->route('posts.index')
@@ -141,7 +166,14 @@ class PostController extends Controller
 
         $post->update([
             'status' => 'pending_review',
-        ]);
+        });
+
+        // AUDIT LOG: submit for review
+        $this->logAudit(
+            'post.submitted_for_review',
+            "Author mengajukan review untuk post '{$post->title}' (ID: {$post->id})",
+            $post
+        );
 
         return back()->with('success', 'Post submitted for review.');
     }
@@ -158,6 +190,13 @@ class PostController extends Controller
             'published_at' => now(),
         ]);
 
+        // AUDIT LOG: approve
+        $this->logAudit(
+            'post.approved',
+            "Post '{$post->title}' (ID: {$post->id}) disetujui dan dipublish",
+            $post
+        );
+
         return back()->with('success', 'Post approved and published.');
     }
 
@@ -172,6 +211,28 @@ class PostController extends Controller
             'status' => 'rejected',
         ]);
 
+        // AUDIT LOG: reject
+        $this->logAudit(
+            'post.rejected',
+            "Post '{$post->title}' (ID: {$post->id}) ditolak",
+            $post
+        );
+
         return back()->with('success', 'Post rejected.');
+    }
+
+    /**
+     * Helper untuk mencatat audit log.
+     */
+    private function logAudit(string $action, string $description, $subject = null): void
+    {
+        AuditLog::create([
+            'user_id'      => Auth::id(),
+            'action'       => $action,
+            'description'  => $description,
+            'subject_type' => $subject ? get_class($subject) : null,
+            'subject_id'   => $subject?->id,
+            'ip_address'   => RequestFacade::ip(),
+        ]);
     }
 }

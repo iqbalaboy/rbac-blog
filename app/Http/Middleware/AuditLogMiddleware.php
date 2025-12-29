@@ -12,7 +12,7 @@ class AuditLogMiddleware
     /**
      * Handle an incoming request.
      */
-    public function handle(Request $request, Closure $next, string $action = null): Response
+    public function handle(Request $request, Closure $next, ?string $action = null): Response
     {
         // Lanjutkan request dulu
         /** @var \Symfony\Component\HttpFoundation\Response $response */

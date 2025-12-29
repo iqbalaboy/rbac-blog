@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -35,7 +36,7 @@ class UserController extends Controller
         $roleIds = $validated['roles'] ?? [];
 
         // Jangan sampai admin menghapus semua role dari dirinya sendiri
-        if ($user->id === auth()->id() && empty($roleIds)) {
+        if ($user->id === Auth::id() && empty($roleIds)) {
             return back()->with('error', 'Anda tidak bisa menghapus semua role dari akun Anda sendiri.');
         }
 

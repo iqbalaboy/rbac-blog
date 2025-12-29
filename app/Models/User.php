@@ -23,16 +23,16 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password'          => 'hashed',
+        'password' => 'hashed',
     ];
 
-    // Relasi ke Role (many-to-many)
+    // Relasi ke Role
     public function roles()
     {
         return $this->belongsToMany(Role::class);
     }
 
-    // Cek role: 'admin' atau ['admin', 'editor']
+    // Method hasRole yang sering kita pakai
     public function hasRole($roles): bool
     {
         if (is_array($roles)) {
@@ -42,6 +42,7 @@ class User extends Authenticatable
         return $this->roles()->where('name', $roles)->exists();
     }
 
+    // Relasi ke Post
     public function posts()
     {
         return $this->hasMany(Post::class);

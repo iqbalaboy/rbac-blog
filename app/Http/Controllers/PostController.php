@@ -34,13 +34,12 @@ class PostController extends Controller
     // DASHBOARD – LIST POST (TERGANTUNG ROLE)
     public function index()
     {
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->hasRole('author') && !$user->hasRole(['admin', 'editor'])) {
-            // author: hanya post miliknya
             $posts = Post::where('user_id', $user->id)->latest()->paginate(10);
         } else {
-            // admin/editor: semua post
             $posts = Post::latest()->paginate(10);
         }
 
@@ -79,21 +78,22 @@ class PostController extends Controller
     }
 
     public function edit(Post $post)
-    {
-        $user = Auth::user();
+{
+    /** @var User $user */
+    $user = Auth::user();
 
-        // author hanya boleh edit miliknya
-        if ($user->hasRole('author') && !$user->hasRole(['admin', 'editor'])) {
-            if ($post->user_id !== $user->id) {
-                abort(403);
-            }
+    if ($user->hasRole('author') && !$user->hasRole(['admin', 'editor'])) {
+        if ($post->user_id !== $user->id) {
+            abort(403);
         }
-
-        return view('posts.edit', compact('post'));
     }
+
+    return view('posts.edit', compact('post'));
+}
 
     public function update(Request $request, Post $post)
     {
+        /** @var User $user */
         $user = Auth::user();
 
         if ($user->hasRole('author') && !$user->hasRole(['admin', 'editor'])) {
@@ -126,6 +126,7 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        /** @var User $user */
         $user = Auth::user();
 
         // author hanya boleh hapus miliknya & bukan published

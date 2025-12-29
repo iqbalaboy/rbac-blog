@@ -166,7 +166,7 @@ class PostController extends Controller
 
         $post->update([
             'status' => 'pending_review',
-        });
+        ]);
 
         // AUDIT LOG: submit for review
         $this->logAudit(

@@ -19,6 +19,12 @@ class Post extends Model
         'published_at',
     ];
 
+    protected $casts = [
+        // Kolom body akan disimpan terenkripsi di DB (AES-256-CBC, key dari APP_KEY)
+        'body' => 'encrypted:string',
+        'published_at' => 'datetime',
+    ];
+
     // Generate slug otomatis saat create jika slug belum diisi
     protected static function booted()
     {

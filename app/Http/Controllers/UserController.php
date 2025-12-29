@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -34,15 +34,14 @@ class UserController extends Controller
         // Role yang dipilih (boleh kosong)
         $roleIds = $validated['roles'] ?? [];
 
-        // Jangan sampai admin menghapus semua role dari dirinya sendiri (opsional tapi aman)
-        if ($user->id === auth()->id()->id && empty($roleIds)) {
+        // Jangan sampai admin menghapus semua role dari dirinya sendiri
+        if ($user->id === auth()->id() && empty($roleIds)) {
             return back()->with('error', 'Anda tidak bisa menghapus semua role dari akun Anda sendiri.');
         }
 
+        // Sync role
         $user->roles()->sync($roleIds);
 
-        return redirect()
-            ->route('users.index')
-            ->with('success', 'Role user berhasil diperbarui.');
+        return redirect()->route('users.index')->with('success', 'Role pengguna berhasil diperbarui.');
     }
 }

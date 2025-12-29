@@ -23,16 +23,16 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'password'          => 'hashed',
     ];
 
-    // === PENTING: relasi ke Role ===
+    // Relasi ke Role (many-to-many)
     public function roles()
     {
         return $this->belongsToMany(Role::class);
     }
 
-    // === PENTING: method hasRole ===
+    // Cek role: 'admin' atau ['admin', 'editor']
     public function hasRole($roles): bool
     {
         if (is_array($roles)) {

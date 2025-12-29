@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,7 +61,7 @@ class PostController extends Controller
             'user_id' => Auth::id(),
             'title'   => $request->title,
             'body'    => $request->body,
-            // status default: draft
+            'status'  => 'draft',
         ]);
 
         return redirect()

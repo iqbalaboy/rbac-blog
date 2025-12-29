@@ -28,7 +28,6 @@ class AuditLog extends Model
      */
     public function subject()
     {
-        // morphTo() pakai kolom subject_type & subject_id
         return $this->morphTo(__FUNCTION__, 'subject_type', 'subject_id');
     }
 }

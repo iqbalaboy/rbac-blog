@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\AuditLogController;
 use Illuminate\Support\Facades\Route;
 use App\Models\AuditLog;
 
@@ -17,6 +18,10 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin'])->group(function () {
         Route::resource('users', UserController::class)->only(['index', 'edit', 'update'])
             ->middleware('audit_log:user_management');
+    });
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/audit-logs', [AuditLogController::class, 'index'])
+            ->name('audit-logs.index');
     });
 
     Route::middleware(['role:admin,editor,author'])->group(function () {
@@ -44,4 +49,4 @@ Route::middleware(['auth'])->group(function () {
         })->name('audit-logs.index');
     });
 });
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

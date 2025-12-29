@@ -38,14 +38,11 @@ Route::middleware(['auth'])->group(function () {
             ->middleware(['role:editor,admin', 'audit_log:post_reject']);
 
         Route::get('/audit-logs', function () {
-            $logs = AuditLog::with('user')
-                ->latest()
-                ->paginate(20);
+            $logs = AuditLog::with('user')->latest()->paginate(20);
 
             return view('audit_logs.index', compact('logs'));
         })->name('audit-logs.index');
     });
 });
 
-// PENTING: auth.php di-include DI LUAR group auth
-require __DIR__ . '/auth.php';
+// TIDAK ada "require __DIR__.'/auth.php';" di sini

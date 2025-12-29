@@ -14,13 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
         then: function () {
             require __DIR__ . '/../routes/profile.php';
-            require __DIR__ . '/../routes/auth.php';   // <-- tambahkan baris ini
+            require __DIR__ . '/../routes/auth.php';
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
         // alias middleware route
         $middleware->alias([
-            'role' => RoleMiddleware::class,
+            'role'      => RoleMiddleware::class,
             'audit_log' => AuditLogMiddleware::class,
         ]);
     })

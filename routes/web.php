@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PostController::class, 'publicIndex'])->name('home');
@@ -26,6 +27,11 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/posts/{post}/reject', [PostController::class, 'reject'])
             ->name('posts.reject')
             ->middleware('role:editor,admin');
+    });
+
+    // Manajemen user hanya untuk admin
+    Route::middleware(['role:admin'])->group(function () {
+        Route::resource('users', UserController::class)->only(['index', 'edit', 'update']);
     });
 });
 

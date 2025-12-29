@@ -44,5 +44,4 @@ Route::middleware(['auth'])->group(function () {
         })->name('audit-logs.index');
     });
 });
-
-// TIDAK ada "require __DIR__.'/auth.php';" di sini
+require __DIR__.'/auth.php';

@@ -13,12 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         then: function () {
+            // Hanya file tambahan yang juga ingin memakai group web
             require __DIR__ . '/../routes/profile.php';
-            require __DIR__ . '/../routes/auth.php';
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // alias middleware route
         $middleware->alias([
             'role'      => RoleMiddleware::class,
             'audit_log' => AuditLogMiddleware::class,

@@ -10,9 +10,12 @@ class AuditLog extends Model
         'user_id',
         'action',
         'description',
-        'subject_type',
-        'subject_id',
+        'auditable_type',
+        'auditable_id',
         'ip_address',
+        'user_agent',
+        'url',
+        'method',
     ];
 
     /**
@@ -24,10 +27,10 @@ class AuditLog extends Model
     }
 
     /**
-     * Model yang menjadi subject dari log (misalnya Post).
+     * Model yang menjadi subject dari log (misalnya Post/User).
      */
-    public function subject()
+    public function auditable()
     {
-        return $this->morphTo(__FUNCTION__, 'subject_type', 'subject_id');
+        return $this->morphTo(__FUNCTION__, 'auditable_type', 'auditable_id');
     }
 }

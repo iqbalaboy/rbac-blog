@@ -52,44 +52,62 @@ class PostController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'body'  => ['required', 'string'],
-        ]);
-
-        $post = Post::create([
-            'user_id' => Auth::id(),
-            'title'   => $request->title,
-            'body'    => $request->body,
-            'status'  => 'draft',
-        ]);
-
-        // AUDIT LOG: create draft
-        $this->logAudit(
-            'post.created',
-            "Membuat post '{$post->title}' (ID: {$post->id}) sebagai draft",
-            $post
-        );
-
-        return redirect()
-            ->route('posts.edit', $post)
-            ->with('success', 'Post created as draft.');
-    }
-
-    public function edit(Post $post)
 {
-    /** @var User $user */
+    $request->validate([
+        'title' => ['required', 'string', 'max:255'],
+        'body'  => ['required', 'string'],
+    ]);
+
+    /** @var \App\Models\User $user */
     $user = Auth::user();
 
-    if ($user->hasRole('author') && !$user->hasRole(['admin', 'editor'])) {
-        if ($post->user_id !== $user->id) {
-            abort(403);
-        }
+    // Default: semua post baru adalah draft
+    $status = 'draft';
+    $publishedAt = null;
+
+    // Jika yang membuat adalah admin atau editor → langsung publish
+    if ($user->hasRole(['admin', 'editor'])) {
+        $status = 'published';
+        $publishedAt = now();
     }
 
-    return view('posts.edit', compact('post'));
+    $post = Post::create([
+        'user_id'      => $user->id,
+        'title'        => $request->title,
+        'body'         => $request->body,
+        'status'       => $status,
+        'published_at' => $publishedAt,
+    ]);
+
+    // AUDIT LOG: create
+    $this->logAudit(
+        'post.created',
+        $status === 'published'
+            ? "Membuat dan mempublish post '{$post->title}' (ID: {$post->id})"
+            : "Membuat post '{$post->title}' (ID: {$post->id}) sebagai draft",
+        $post
+    );
+
+    return redirect()
+        ->route('posts.edit', $post)
+        ->with('success', $status === 'published'
+            ? 'Post created and published.'
+            : 'Post created as draft.');
 }
+
+    public function edit(Post $post)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        if ($user->hasRole('author') && !$user->hasRole(['admin', 'editor'])) {
+            if ($post->user_id !== $user->id) {
+                abort(403);
+            }
+        }
+
+        return view('posts.edit', compact('post'));
+    }
 
     public function update(Request $request, Post $post)
     {
@@ -228,12 +246,15 @@ class PostController extends Controller
     private function logAudit(string $action, string $description, $subject = null): void
     {
         AuditLog::create([
-            'user_id'      => Auth::id(),
-            'action'       => $action,
-            'description'  => $description,
-            'subject_type' => $subject ? get_class($subject) : null,
-            'subject_id'   => $subject?->id,
-            'ip_address'   => RequestFacade::ip(),
+            'user_id'        => Auth::id(),
+            'action'         => $action,
+            'description'    => $description,
+            'auditable_type' => $subject ? get_class($subject) : null,
+            'auditable_id'   => $subject?->id,
+            'ip_address'     => RequestFacade::ip(),
+            'user_agent'     => request()->userAgent(),
+            'url'            => request()->fullUrl(),
+            'method'         => request()->method(),
         ]);
     }
 }

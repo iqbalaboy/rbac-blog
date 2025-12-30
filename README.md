@@ -7,6 +7,7 @@ Aplikasi ini mendukung tiga peran utama, yaitu Admin Editor dan Author yang masi
 Selain itu, aplikasi ini dilengkapi dengan sistem audit log untuk mencatat aktivitas penting pengguna sebagai bentuk transparansi dan keamanan sistem.
 
  ✨ Fitur Utama
+ 
  🔐 Autentikasi dan Otorisasi
 - Autentikasi pengguna menggunakan Laravel Breeze
 - Role-Based Access Control menggunakan middleware

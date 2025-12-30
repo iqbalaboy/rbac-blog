@@ -9,9 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuditLogMiddleware
 {
-    /**
-     * Handle an incoming request.
-     */
     public function handle(Request $request, Closure $next, ?string $action = null): Response
     {
         // Lanjutkan request dulu

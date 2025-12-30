@@ -61,11 +61,9 @@ class PostController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        // Default: semua post baru adalah draft
         $status = 'draft';
         $publishedAt = null;
 
-        // Jika yang membuat adalah admin atau editor → langsung publish
         if ($user->hasRole(['admin', 'editor'])) {
             $status = 'published';
             $publishedAt = now();

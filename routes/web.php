@@ -4,28 +4,31 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\AuditLogController;
 use Illuminate\Support\Facades\Route;
-use App\Models\AuditLog;
 
 Route::get('/', [PostController::class, 'publicIndex'])->name('home');
 Route::get('/post/{slug}', [PostController::class, 'show'])->name('post.show');
 
 Route::middleware(['auth'])->group(function () {
+
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Manajemen user (hanya admin)
+    require __DIR__ . '/profile.php';
+
+    // Manajemen user (admin)
     Route::middleware(['role:admin'])->group(function () {
-        Route::resource('users', UserController::class)->only(['index', 'edit', 'update'])
+        Route::resource('users', UserController::class)
+            ->only(['index', 'edit', 'update'])
             ->middleware('audit_log:user_management');
-    });
-    Route::middleware(['auth', 'role:admin'])->group(function () {
+
         Route::get('/audit-logs', [AuditLogController::class, 'index'])
             ->name('audit-logs.index');
     });
 
+    // Posts (admin, editor, author)
     Route::middleware(['role:admin,editor,author'])->group(function () {
-        // CRUD posts – log aktivitas
+
         Route::resource('posts', PostController::class)
             ->except(['show'])
             ->middleware('audit_log:post_crud');
@@ -41,10 +44,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/posts/{post}/reject', [PostController::class, 'reject'])
             ->name('posts.reject')
             ->middleware(['role:editor,admin', 'audit_log:post_reject']);
-
-        Route::get('/audit-logs', [AuditLogController::class, 'index'])
-    ->name('audit-logs.index');
     });
 });
-require __DIR__ . '/profile.php';
+
 require __DIR__ . '/auth.php';

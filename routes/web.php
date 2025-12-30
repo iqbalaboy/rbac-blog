@@ -42,12 +42,9 @@ Route::middleware(['auth'])->group(function () {
             ->name('posts.reject')
             ->middleware(['role:editor,admin', 'audit_log:post_reject']);
 
-        Route::get('/audit-logs', function () {
-            $logs = AuditLog::with('user')->latest()->paginate(20);
-
-            return view('audit_logs.index', compact('logs'));
-        })->name('audit-logs.index');
+        Route::get('/audit-logs', [AuditLogController::class, 'index'])
+    ->name('audit-logs.index');
     });
 });
-require __DIR__ . '/auth.php';
 require __DIR__ . '/profile.php';
+require __DIR__ . '/auth.php';

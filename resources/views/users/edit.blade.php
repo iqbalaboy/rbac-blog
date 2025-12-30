@@ -17,25 +17,25 @@
             </div>
 
             @if(session('success'))
-                <div class="mb-4 p-3 bg-green-100 text-green-800 border border-green-200 rounded text-sm">
-                    {{ session('success') }}
-                </div>
+            <div class="mb-4 p-3 bg-green-100 text-green-800 border border-green-200 rounded text-sm">
+                {{ session('success') }}
+            </div>
             @endif
 
             @if(session('error'))
-                <div class="mb-4 p-3 bg-red-100 text-red-800 border border-red-200 rounded text-sm">
-                    {{ session('error') }}
-                </div>
+            <div class="mb-4 p-3 bg-red-100 text-red-800 border border-red-200 rounded text-sm">
+                {{ session('error') }}
+            </div>
             @endif
 
             @if($errors->any())
-                <div class="mb-4 p-3 bg-red-100 text-red-800 border border-red-200 rounded text-sm">
-                    <ul class="list-disc list-inside space-y-1">
-                        @foreach($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+            <div class="mb-4 p-3 bg-red-100 text-red-800 border border-red-200 rounded text-sm">
+                <ul class="list-disc list-inside space-y-1">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
             @endif
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
@@ -65,25 +65,24 @@
 
                         <div class="space-y-2">
                             @foreach($roles as $role)
-                                <label class="inline-flex items-center gap-2 text-sm text-gray-700">
-                                    <input
-                                        type="checkbox"
-                                        name="roles[]"
-                                        value="{{ $role->id }}"
-                                        class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
-                                        {{ in_array($role->id, $userRoleIds) ? 'checked' : '' }}
-                                    >
-                                    <span>
-                                        {{ ucfirst($role->name) }}
-                                        @if($role->name === 'admin')
-                                            <span class="ml-1 text-xs text-red-600">(akses penuh)</span>
-                                        @elseif($role->name === 'editor')
-                                            <span class="ml-1 text-xs text-blue-600">(review & publish)</span>
-                                        @elseif($role->name === 'author')
-                                            <span class="ml-1 text-xs text-green-600">(buat konten)</span>
-                                        @endif
-                                    </span>
-                                </label>
+                            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                                <input
+                                    type="checkbox"
+                                    name="roles[]"
+                                    value="{{ $role->id }}"
+                                    class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500"
+                                    {{ in_array($role->id, $userRoleIds) ? 'checked' : '' }}>
+                                <span>
+                                    {{ ucfirst($role->name) }}
+                                    @if($role->name === 'admin')
+                                    <span class="ml-1 text-xs text-red-600">(akses penuh)</span>
+                                    @elseif($role->name === 'editor')
+                                    <span class="ml-1 text-xs text-blue-600">(review & publish)</span>
+                                    @elseif($role->name === 'author')
+                                    <span class="ml-1 text-xs text-green-600">(buat konten)</span>
+                                    @endif
+                                </span>
+                            </label>
                             @endforeach
                         </div>
 
@@ -94,12 +93,12 @@
 
                     <div class="flex justify-between items-center mt-6">
                         <a href="{{ route('users.index') }}"
-                           class="px-4 py-2 bg-gray-200 text-gray-800 rounded text-sm">
+                            class="px-4 py-2 bg-gray-200 text-gray-800 rounded text-sm">
                             Kembali
                         </a>
 
                         <button type="submit"
-                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
+                            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">
                             Simpan Perubahan
                         </button>
                     </div>

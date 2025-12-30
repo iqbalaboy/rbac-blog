@@ -52,48 +52,48 @@ class PostController extends Controller
     }
 
     public function store(Request $request)
-{
-    $request->validate([
-        'title' => ['required', 'string', 'max:255'],
-        'body'  => ['required', 'string'],
-    ]);
+    {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'body'  => ['required', 'string'],
+        ]);
 
-    /** @var \App\Models\User $user */
-    $user = Auth::user();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-    // Default: semua post baru adalah draft
-    $status = 'draft';
-    $publishedAt = null;
+        // Default: semua post baru adalah draft
+        $status = 'draft';
+        $publishedAt = null;
 
-    // Jika yang membuat adalah admin atau editor → langsung publish
-    if ($user->hasRole(['admin', 'editor'])) {
-        $status = 'published';
-        $publishedAt = now();
+        // Jika yang membuat adalah admin atau editor → langsung publish
+        if ($user->hasRole(['admin', 'editor'])) {
+            $status = 'published';
+            $publishedAt = now();
+        }
+
+        $post = Post::create([
+            'user_id'      => $user->id,
+            'title'        => $request->title,
+            'body'         => $request->body,
+            'status'       => $status,
+            'published_at' => $publishedAt,
+        ]);
+
+        // AUDIT LOG: create
+        $this->logAudit(
+            'post.created',
+            $status === 'published'
+                ? "Membuat dan mempublish post '{$post->title}' (ID: {$post->id})"
+                : "Membuat post '{$post->title}' (ID: {$post->id}) sebagai draft",
+            $post
+        );
+
+        return redirect()
+            ->route('posts.edit', $post)
+            ->with('success', $status === 'published'
+                ? 'Post created and published.'
+                : 'Post created as draft.');
     }
-
-    $post = Post::create([
-        'user_id'      => $user->id,
-        'title'        => $request->title,
-        'body'         => $request->body,
-        'status'       => $status,
-        'published_at' => $publishedAt,
-    ]);
-
-    // AUDIT LOG: create
-    $this->logAudit(
-        'post.created',
-        $status === 'published'
-            ? "Membuat dan mempublish post '{$post->title}' (ID: {$post->id})"
-            : "Membuat post '{$post->title}' (ID: {$post->id}) sebagai draft",
-        $post
-    );
-
-    return redirect()
-        ->route('posts.edit', $post)
-        ->with('success', $status === 'published'
-            ? 'Post created and published.'
-            : 'Post created as draft.');
-}
 
     public function edit(Post $post)
     {

@@ -39,7 +39,7 @@ class AuditLogMiddleware
                 AuditLog::create([
                     'user_id'       => $user->id,
                     'action'        => $action ?: ($route?->getName() ?? $request->method()),
-                    'auditable_type'=> $auditable ? get_class($auditable) : null,
+                    'auditable_type' => $auditable ? get_class($auditable) : null,
                     'auditable_id'  => $auditable?->getKey(),
                     'description'   => sprintf(
                         '%s %s mengakses %s',

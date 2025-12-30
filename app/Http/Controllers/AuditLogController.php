@@ -15,14 +15,16 @@ class AuditLogController extends Controller
     {
         $query = AuditLog::with('user')->latest();
 
+        // Filter by action
         if ($request->filled('action')) {
             $query->where('action', 'like', '%' . $request->action . '%');
         }
 
+        // Filter by user (nama atau email)
         if ($request->filled('user')) {
             $query->whereHas('user', function ($q) use ($request) {
                 $q->where('email', 'like', '%' . $request->user . '%')
-                  ->orWhere('name', 'like', '%' . $request->user . '%');
+                    ->orWhere('name', 'like', '%' . $request->user . '%');
             });
         }
 

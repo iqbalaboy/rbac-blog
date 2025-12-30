@@ -119,6 +119,10 @@ $draftPosts = Post::where('status', 'draft')->count();
             </div>
             @endif
 
+            <a href="{{ route('profile.edit') }}" class="text-blue-600 underline">
+                TEST: ke halaman profile
+            </a>
+
         </div>
     </div>
 </x-app-layout>
